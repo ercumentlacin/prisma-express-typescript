@@ -1,38 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import 'dotenv/config';
+import 'module-alias/register';
 
-const prisma = new PrismaClient();
+import { App } from './app';
+import { config } from './constants';
+import { Routes } from './routes';
 
-async function main() {
-    await prisma.user.create({
-        data: {
-            name: 'Alice',
-            email: 'alice@prisma.io',
-            todos: {
-                create: {
-                    title: 'This is a test',
-                },
-            },
-            profile: {
-                create: { bio: 'I like turtles' },
-            },
-        },
-    });
+const app = new App(new Routes().routes, config.port);
 
-    const allUsers = await prisma.user.findMany({
-        include: {
-            todos: true,
-            profile: true,
-        },
-    });
-    console.dir(allUsers, { depth: null });
-}
-
-main()
-    .then(async () => {
-        await prisma.$disconnect();
-    })
-    .catch(async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        process.exit(1);
-    });
+app.listen();
