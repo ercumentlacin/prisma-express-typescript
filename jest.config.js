@@ -16,4 +16,12 @@ module.exports = {
     moduleNameMapper: {
         ...pathsToModuleNameMapper({ '@/*': ['<rootDir>/src/*'] }),
     },
+
+    collectCoverage: true,
+    collectCoverageFrom: ['./src/**'],
+    coverageThreshold: {
+        global: {
+            lines: 90,
+        },
+    },
 };

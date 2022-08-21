@@ -1,11 +1,13 @@
 import { Controller } from '@/interfaces';
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { BookInsertOneRequestDTO, BookOrderRequest, BookService } from '.';
 import { OrderService } from '../orders';
 import asyncHandler from 'express-async-handler';
 import { responseBody } from '@/utils/responseBody';
 import { BookInsertValidator, BookOrderRequestValidator } from './middlewares';
+import { HttpException } from '@/utils';
+import { NotFoundError } from '@prisma/client/runtime';
 
 export class BookController implements Controller {
     public router = Router();
@@ -21,7 +23,7 @@ export class BookController implements Controller {
     private initializeRoutes() {
         this.router.get(`${this.path}/books`, this.getBooks);
         this.router.get(`${this.path}/orders`, this.getOrders);
-        // this.router.get('/:id', this.getUserById);
+        this.router.get(`${this.path}/books/:id`, this.getBook);
         this.router.post(this.path, BookOrderRequestValidator, this.putAnOrder);
         this.router.post(
             `${this.path}/create-book`,
@@ -61,4 +63,17 @@ export class BookController implements Controller {
         const result = await this.bookService.getAll();
         res.status(StatusCodes.OK).json(result);
     });
+
+    public getBook = asyncHandler(
+        async (req: Request, res: Response, next: NextFunction) => {
+            try {
+                const book = await this.bookService.findBookId(req.params.id);
+                res.status(StatusCodes.OK).json(book);
+            } catch (e: unknown) {
+                if (e instanceof NotFoundError) {
+                    next(new HttpException(e.message, StatusCodes.NOT_FOUND));
+                }
+            }
+        }
+    );
 }

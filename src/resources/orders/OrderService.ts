@@ -19,9 +19,9 @@ export class OrderService {
 
         const nonNullableBookList = bookList
             .filter((book) => book !== null)
-            .map((book) => book.id);
+            .map((book) => book?.id);
 
-        const totalPrice = bookList.reduce((acc, book) => acc + book.price, 0);
+        const totalPrice = bookList.reduce((acc, book) => acc + book!.price, 0);
 
         const createdOrder = this.orderRepository.save({
             userName,

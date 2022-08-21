@@ -3,7 +3,7 @@ import { BookRepository, Book, BookInsertOneRequestDTO } from '.';
 export class BookService {
     public constructor(private readonly bookRepository: BookRepository) {}
 
-    public async findBookId(bookId: string): Promise<Book> {
+    public async findBookId(bookId: string) {
         return this.bookRepository.findById(bookId);
     }
 

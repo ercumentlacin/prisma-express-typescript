@@ -4,8 +4,10 @@ import { Book, BookInsertOneRequestDTO } from '.';
 export class BookRepository {
     public constructor(private prismaService: PrismaDB) {}
 
-    public async findById(id: string): Promise<Book> {
-        return this.prismaService.book.findUniqueOrThrow({ where: { id } });
+    public async findById(id: string) {
+        return await this.prismaService.book.findUniqueOrThrow({
+            where: { id },
+        });
     }
 
     public async createOne(data: BookInsertOneRequestDTO) {
